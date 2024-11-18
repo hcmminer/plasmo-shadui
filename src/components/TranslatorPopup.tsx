@@ -1,37 +1,32 @@
 import React from "react";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardFooter } from "../components/ui/card";
 
 type TranslatorPopupProps = {
     text: string;
     onClose: () => void;
 };
 
-export const TranslatorPopup: React.FC<TranslatorPopupProps> = ({ text, onClose }) => {
+export const TranslatorPopup: React.FC<TranslatorPopupProps> = ({
+                                                                    text,
+                                                                    onClose,
+                                                                }) => {
     return (
         <div
-            className="translator-popup"
-            style={{
-                position: "absolute",
-                top: "100px", // Position as needed
-                left: "100px",
-                backgroundColor: "white",
-                borderRadius: "8px",
-                padding: "16px",
-                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-                zIndex: 9999,
-            }}
+            className="absolute top-24 left-24 z-50"
+            role="dialog"
+            aria-label="Translation Popup"
         >
-            <p style={{ marginBottom: "10px" }}>{text}</p>
-            <button
-                onClick={onClose}
-                style={{
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "#555",
-                }}
-            >
-                Close
-            </button>
+            <Card className="shadow-lg rounded-lg">
+                <CardContent className="p-4">
+                    <p className="text-base text-gray-700">{text}</p>
+                </CardContent>
+                <CardFooter className="flex justify-end">
+                    <Button variant="outline" size="sm" onClick={onClose}>
+                        Close
+                    </Button>
+                </CardFooter>
+            </Card>
         </div>
     );
 };
