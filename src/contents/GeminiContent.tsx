@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback, useRef} from "react";
-import { createRoot } from "react-dom/client";
-import { useTranslationStore } from "~store/translationStore";
+import {createRoot} from "react-dom/client";
+import {useTranslationStore} from "~store/translationStore";
 import "~main.css";
 import Tooltip from "~components/Tooltip";
 
@@ -8,7 +8,7 @@ const GeminiContent = () => {
     const [selectedText, setSelectedText] = useState<string | null>(null);
     const [translatedText, setTranslatedText] = useState<string | null>(null);
     const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
-    const { getTranslation, addTranslation } = useTranslationStore();
+    const {getTranslation, addTranslation} = useTranslationStore();
     const spanRef = useRef<HTMLSpanElement | null>(null);
 
     const handleTextClick = useCallback((event: MouseEvent) => {
@@ -45,7 +45,7 @@ const GeminiContent = () => {
                     });
                 } else {
                     chrome.runtime.sendMessage(
-                        { type: "TRANSLATE_TEXT", text },
+                        {type: "TRANSLATE_TEXT", text},
                         (response) => {
                             const translated = response.translatedText || "Không thể dịch được.";
                             setSelectedText(text);
@@ -88,23 +88,16 @@ const GeminiContent = () => {
     }, [handleTextClick]);
 
     return (
-        <>
-            {tooltipPosition && translatedText && (
-                <Tooltip
-                    position={tooltipPosition}
-                    text={translatedText}
-                    onClose={clearTooltip}
-                />
-            )}
-            <style>{`
-        .tooltip {
-          position: absolute;
-        }
-      `}</style>
-        </>
+        tooltipPosition && translatedText && (
+            <Tooltip
+                position={tooltipPosition}
+                text={translatedText}
+                onClose={clearTooltip}
+            />
+        )
     );
 };
 
 const root = document.createElement("div");
 document.body.appendChild(root);
-createRoot(root).render(<GeminiContent />);
+createRoot(root).render(<GeminiContent/>);
