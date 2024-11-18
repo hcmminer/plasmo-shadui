@@ -5,7 +5,6 @@ import "~main.css";
 import Tooltip from "~components/Tooltip";
 
 const GeminiContent = () => {
-    const [selectedText, setSelectedText] = useState<string | null>(null);
     const [translatedText, setTranslatedText] = useState<string | null>(null);
     const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
     const {getTranslation, addTranslation} = useTranslationStore();
@@ -37,7 +36,6 @@ const GeminiContent = () => {
                 const cachedTranslation = getTranslation(text);
 
                 if (cachedTranslation) {
-                    setSelectedText(text);
                     setTranslatedText(cachedTranslation);
                     setTooltipPosition({
                         top: rect.bottom + window.scrollY,
@@ -48,7 +46,6 @@ const GeminiContent = () => {
                         {type: "TRANSLATE_TEXT", text},
                         (response) => {
                             const translated = response.translatedText || "Không thể dịch được.";
-                            setSelectedText(text);
                             setTranslatedText(translated);
                             addTranslation(text, translated);
                             setTooltipPosition({
@@ -65,7 +62,6 @@ const GeminiContent = () => {
     }, []);
 
     const clearTooltip = useCallback(() => {
-        setSelectedText(null);
         setTranslatedText(null);
         setTooltipPosition(null);
         cleanupHighlights();
