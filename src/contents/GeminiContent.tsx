@@ -101,10 +101,6 @@ const GeminiContent = () => {
                 </div>
             )}
             <style>{`
-        .highlighted {
-          background-color: yellow;
-          font-weight: bold;
-        }
         .tooltip {
           position: absolute;
         }
