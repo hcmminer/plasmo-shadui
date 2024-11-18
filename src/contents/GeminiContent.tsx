@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useCallback, useRef} from "react";
 import { createRoot } from "react-dom/client";
 import { useTranslationStore } from "~store/translationStore";
 import "~main.css";
@@ -8,8 +8,11 @@ const GeminiContent = () => {
     const [translatedText, setTranslatedText] = useState<string | null>(null);
     const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
     const { getTranslation, addTranslation } = useTranslationStore();
+    const spanRef = useRef<HTMLSpanElement | null>(null);
 
-    const handleTextClick = (event: MouseEvent) => {
+    const handleTextClick = useCallback((event: MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
         const selection = window.getSelection();
         const text = selection?.toString().trim();
 
@@ -20,14 +23,16 @@ const GeminiContent = () => {
                 cleanupHighlights();
 
                 // Wrap selected text with a span
-                const span = document.createElement("span");
-                span.className = "highlighted";
-                span.textContent = text;
+                if (!spanRef.current) {
+                    spanRef.current = document.createElement("span");
+                    spanRef.current.className = "highlighted";
+                    spanRef.current.textContent = text;
+                }
 
-                range.surroundContents(span);
+                range.surroundContents(spanRef.current);
 
                 // Get position of the span for tooltip
-                const rect = span.getBoundingClientRect();
+                const rect = spanRef.current.getBoundingClientRect();
                 const cachedTranslation = getTranslation(text);
 
                 if (cachedTranslation) {
@@ -56,49 +61,57 @@ const GeminiContent = () => {
         } else {
             clearTooltip();
         }
-    };
+    }, []);
 
-    const clearTooltip = () => {
+    const clearTooltip = useCallback(() => {
         setSelectedText(null);
         setTranslatedText(null);
         setTooltipPosition(null);
         cleanupHighlights();
-    };
+    }, []);
 
-    const cleanupHighlights = () => {
+    const cleanupHighlights = useCallback(() => {
         document.querySelectorAll(".highlighted").forEach((el) => {
             const parent = el.parentNode;
             if (parent) {
                 parent.replaceChild(document.createTextNode(el.textContent || ""), el);
             }
         });
-    };
+    }, []);
 
     useEffect(() => {
         document.addEventListener("click", handleTextClick);
         return () => {
             document.removeEventListener("click", handleTextClick);
         };
-    }, []);
+    }, [handleTextClick]);
+
+    const Tooltip = ({ position, text, onClose }) => (
+        <div
+            className="tooltip absolute z-50 p-2 bg-white shadow-md rounded-md border"
+            style={{
+                top: position.top,
+                left: position.left,
+            }}
+        >
+            <p className="text-sm text-gray-800">{text}</p>
+            <button
+                className="mt-1 text-xs text-blue-500 hover:underline"
+                onClick={onClose}
+            >
+                Close
+            </button>
+        </div>
+    );
 
     return (
         <>
             {tooltipPosition && translatedText && (
-                <div
-                    className="tooltip absolute z-50 p-2 bg-white shadow-md rounded-md border"
-                    style={{
-                        top: tooltipPosition.top,
-                        left: tooltipPosition.left,
-                    }}
-                >
-                    <p className="text-sm text-gray-800">{translatedText}</p>
-                    <button
-                        className="mt-1 text-xs text-blue-500 hover:underline"
-                        onClick={clearTooltip}
-                    >
-                        Close
-                    </button>
-                </div>
+                <Tooltip
+                    position={tooltipPosition}
+                    text={translatedText}
+                    onClose={clearTooltip}
+                />
             )}
             <style>{`
         .tooltip {
