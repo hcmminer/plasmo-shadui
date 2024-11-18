@@ -84,21 +84,13 @@ const GeminiContent = () => {
     }, [handleTextClick]);
 
     return (
-        <>
-            {tooltipPosition && translatedText && (
-                <Tooltip
-                    position={tooltipPosition}
-                    text={translatedText}
-                    onClose={clearTooltip}
-                />
-            )}
-            <style>{`
-        .tooltip1234567 {
-          position: absolute;
-          z-index: 9999 !important;
-        }
-      `}</style>
-        </>
+        tooltipPosition && translatedText && (
+            <Tooltip
+                position={tooltipPosition}
+                text={translatedText}
+                onClose={clearTooltip}
+            />
+        )
     );
 };
 

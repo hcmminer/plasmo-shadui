@@ -7,17 +7,18 @@ interface TooltipProps {
     onClose: () => void;
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ position, text, onClose }) => (
+const Tooltip: React.FC<TooltipProps> = ({position, text, onClose}) => (
     <div
-        className="tooltip1234567 absolute p-2 bg-white shadow-md rounded-md border"
+        className="absolute p-2 bg-white shadow-md rounded-md border"
         style={{
             top: position.top,
             left: position.left,
+            zIndex: 9999
         }}
     >
-        <p className="text-sm text-gray-800">{text}</p>
+        <p className="text-gray-800">{text}</p>
         <button
-            className="mt-1 text-xs text-blue-500 hover:underline"
+            className="mt-1 text-blue-500 hover:underline"
             onClick={onClose}
         >
             Close
