@@ -9,7 +9,7 @@ interface TooltipProps {
 
 const Tooltip: React.FC<TooltipProps> = ({ position, text, onClose }) => (
     <div
-        className="tooltip absolute z-50 p-2 bg-white shadow-md rounded-md border"
+        className="tooltip1234567 absolute p-2 bg-white shadow-md rounded-md border"
         style={{
             top: position.top,
             left: position.left,
