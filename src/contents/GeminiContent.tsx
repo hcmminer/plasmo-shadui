@@ -2,6 +2,7 @@ import React, {useState, useEffect, useCallback, useRef} from "react";
 import { createRoot } from "react-dom/client";
 import { useTranslationStore } from "~store/translationStore";
 import "~main.css";
+import Tooltip from "~components/Tooltip";
 
 const GeminiContent = () => {
     const [selectedText, setSelectedText] = useState<string | null>(null);
@@ -85,24 +86,6 @@ const GeminiContent = () => {
             document.removeEventListener("click", handleTextClick);
         };
     }, [handleTextClick]);
-
-    const Tooltip = ({ position, text, onClose }) => (
-        <div
-            className="tooltip absolute z-50 p-2 bg-white shadow-md rounded-md border"
-            style={{
-                top: position.top,
-                left: position.left,
-            }}
-        >
-            <p className="text-sm text-gray-800">{text}</p>
-            <button
-                className="mt-1 text-xs text-blue-500 hover:underline"
-                onClick={onClose}
-            >
-                Close
-            </button>
-        </div>
-    );
 
     return (
         <>
