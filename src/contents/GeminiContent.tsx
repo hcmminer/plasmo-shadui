@@ -1,14 +1,16 @@
-import React, {useState, useEffect, useCallback, useRef} from "react";
-import {createRoot} from "react-dom/client";
-import {useTranslationStore} from "~store/translationStore";
-import "~main.css";
-import Tooltip from "~components/Tooltip";
+
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { createRoot } from 'react-dom/client';
+import { useTranslationStore } from '~store/translationStore';
+import '~main.css';
+import Tooltip from '~components/Tooltip';
+import type { PlasmoCSConfig } from "plasmo";
 
 const GeminiContent = () => {
-    const [translatedText, setTranslatedText] = useState<string | null>(null);
+    const [translatedText, setTranslatedText] = useState(null);
     const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
-    const {getTranslation, addTranslation} = useTranslationStore();
-    const spanRef = useRef<HTMLSpanElement | null>(null);
+    const { getTranslation, addTranslation } = useTranslationStore();
+    const spanRef = useRef(null);
 
     const handleTextClick = useCallback((event: MouseEvent) => {
         event.preventDefault();
@@ -19,19 +21,16 @@ const GeminiContent = () => {
         if (text) {
             const range = selection?.getRangeAt(0);
             if (range) {
-                // Clean up previous highlights
                 cleanupHighlights();
 
-                // Wrap selected text with a span
                 if (!spanRef.current) {
-                    spanRef.current = document.createElement("span");
-                    spanRef.current.className = "highlighted";
+                    spanRef.current = document.createElement('span');
+                    spanRef.current.className = 'highlighted';
                     spanRef.current.textContent = text;
                 }
 
                 range.surroundContents(spanRef.current);
 
-                // Get position of the span for tooltip
                 const rect = spanRef.current.getBoundingClientRect();
                 const cachedTranslation = getTranslation(text);
 
@@ -43,9 +42,9 @@ const GeminiContent = () => {
                     });
                 } else {
                     chrome.runtime.sendMessage(
-                        {type: "TRANSLATE_TEXT", text},
+                        { type: 'TRANSLATE_TEXT', text },
                         (response) => {
-                            const translated = response.translatedText || "Không thể dịch được.";
+                            const translated = response.translatedText || 'Không thể dịch được.';
                             setTranslatedText(translated);
                             addTranslation(text, translated);
                             setTooltipPosition({
@@ -59,7 +58,7 @@ const GeminiContent = () => {
         } else {
             clearTooltip();
         }
-    }, []);
+    }, [getTranslation, addTranslation]);
 
     const clearTooltip = useCallback(() => {
         setTranslatedText(null);
@@ -68,32 +67,37 @@ const GeminiContent = () => {
     }, []);
 
     const cleanupHighlights = useCallback(() => {
-        document.querySelectorAll(".highlighted").forEach((el) => {
+        document.querySelectorAll('.highlighted').forEach((el) => {
             const parent = el.parentNode;
             if (parent) {
-                parent.replaceChild(document.createTextNode(el.textContent || ""), el);
+                parent.replaceChild(document.createTextNode(el.textContent || ''), el);
             }
         });
+        spanRef.current = null;
     }, []);
 
     useEffect(() => {
-        document.addEventListener("click", handleTextClick);
+        document.addEventListener('click', handleTextClick);
         return () => {
-            document.removeEventListener("click", handleTextClick);
+            document.removeEventListener('click', handleTextClick);
         };
     }, [handleTextClick]);
 
     return (
-        tooltipPosition && translatedText && (
-            <Tooltip
-                position={tooltipPosition}
-                text={translatedText}
-                onClose={clearTooltip}
-            />
-        )
+        <>
+            {tooltipPosition && translatedText && (
+                <Tooltip
+                    position={tooltipPosition}
+                    text={translatedText}
+                    onClose={clearTooltip}
+                />
+            )}
+        </>
     );
 };
 
-const root = document.createElement("div");
+const root = document.createElement('div');
+const shadow = root.attachShadow({ mode: 'open' });
 document.body.appendChild(root);
-createRoot(root).render(<GeminiContent/>);
+createRoot(shadow).render(<GeminiContent />);
+
