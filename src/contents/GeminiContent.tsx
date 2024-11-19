@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslationStore } from '~store/translationStore';
 import '~main.css';
 import Tooltip from '~components/Tooltip';
+import { sendToBackground } from "@plasmohq/messaging";
 import type { PlasmoCSConfig } from "plasmo";
 
 const GeminiContent = () => {
@@ -12,7 +12,7 @@ const GeminiContent = () => {
     const { getTranslation, addTranslation } = useTranslationStore();
     const spanRef = useRef(null);
 
-    const handleTextClick = useCallback((event: MouseEvent) => {
+    const handleTextClick = useCallback(async (event: MouseEvent) => {
         event.preventDefault();
         event.stopPropagation();
         const selection = window.getSelection();
@@ -41,18 +41,18 @@ const GeminiContent = () => {
                         left: rect.left + window.scrollX,
                     });
                 } else {
-                    chrome.runtime.sendMessage(
-                        { type: 'TRANSLATE_TEXT', text },
-                        (response) => {
-                            const translated = response.translatedText || 'Không thể dịch được.';
-                            setTranslatedText(translated);
-                            addTranslation(text, translated);
-                            setTooltipPosition({
-                                top: rect.bottom + window.scrollY,
-                                left: rect.left + window.scrollX,
-                            });
-                        }
-                    );
+                    const response = await sendToBackground({
+                        name: "translate",
+                        body: { text }
+                    });
+
+                    const translated = response.translatedText || 'Không thể dịch được.';
+                    setTranslatedText(translated);
+                    addTranslation(text, translated);
+                    setTooltipPosition({
+                        top: rect.bottom + window.scrollY,
+                        left: rect.left + window.scrollX,
+                    });
                 }
             }
         } else {
@@ -100,4 +100,3 @@ const root = document.createElement('div');
 const shadow = root.attachShadow({ mode: 'open' });
 document.body.appendChild(root);
 createRoot(shadow).render(<GeminiContent />);
-

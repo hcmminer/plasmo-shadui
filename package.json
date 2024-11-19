@@ -10,6 +10,7 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.11.0",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",
@@ -17,8 +18,10 @@
     "@radix-ui/react-tooltip": "^1.1.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "install": "^0.13.0",
     "lucide-react": "^0.407.0",
     "plasmo": "0.89.4",
+    "pnpm": "^9.13.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwind-merge": "^2.4.0",
