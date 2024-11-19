@@ -24,12 +24,16 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             }),
         });
 
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+
         const data = await response.json();
         const content = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Không thể dịch được.";
         res.send({ translatedText: content });
     } catch (error) {
         console.error("Gemini API error:", error);
-        res.send({ error: "Có lỗi xảy ra trong quá trình gọi API." });
+        res.send({ error: `Có lỗi xảy ra trong quá trình gọi API: ${error.message}` });
     }
 };
 

@@ -37,7 +37,7 @@ const GeminiContent = () => {
                 if (cachedTranslation) {
                     setTranslatedText(cachedTranslation);
                     setTooltipPosition({
-                        top: rect.bottom + window.scrollY,
+                        top: rect.bottom + window.scrollY + 5, // Adding a small offset
                         left: rect.left + window.scrollX,
                     });
                 } else {
@@ -50,7 +50,7 @@ const GeminiContent = () => {
                     setTranslatedText(translated);
                     addTranslation(text, translated);
                     setTooltipPosition({
-                        top: rect.bottom + window.scrollY,
+                        top: rect.bottom + window.scrollY + 5, // Adding a small offset
                         left: rect.left + window.scrollX,
                     });
                 }
@@ -82,6 +82,23 @@ const GeminiContent = () => {
             document.removeEventListener('click', handleTextClick);
         };
     }, [handleTextClick]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (spanRef.current) {
+                const rect = spanRef.current.getBoundingClientRect();
+                setTooltipPosition({
+                    top: rect.bottom + window.scrollY + 5, // Adding a small offset
+                    left: rect.left + window.scrollX,
+                });
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     return (
         <>
