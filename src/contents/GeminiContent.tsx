@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslationStore } from '~store/translationStore';
 import '~main.css';
-import Tooltip from '~components/Tooltip';
+import {Tooltip} from '~components/Tooltip';
 import { sendToBackground } from "@plasmohq/messaging";
 import type { PlasmoCSConfig } from "plasmo";
 
@@ -42,7 +42,7 @@ const GeminiContent = () => {
                     });
                 } else {
                     const response = await sendToBackground({
-                        name: "translate",
+                        name: "translate" as never,
                         body: { text }
                     });
 

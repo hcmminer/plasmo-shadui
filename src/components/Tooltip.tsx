@@ -6,7 +6,7 @@ interface TooltipProps {
     onClose: () => void;
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ position, text, onClose }) => (
+export const Tooltip: React.FC<TooltipProps> = ({ position, text, onClose }) => (
     <div
         style={{
             position: 'absolute',
@@ -22,5 +22,3 @@ const Tooltip: React.FC<TooltipProps> = ({ position, text, onClose }) => (
         <button onClick={onClose}>Close</button>
     </div>
 );
-
-export default Tooltip;
